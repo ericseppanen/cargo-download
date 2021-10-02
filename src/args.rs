@@ -36,7 +36,7 @@ pub fn parse_from_argv<I, T>(argv: I) -> Result<Options, ArgsError>
     }
 
     let parser = create_parser();
-    let matches = try!(parser.get_matches_from_safe(argv));
+    let matches = parser.get_matches_from_safe(argv)?;
     Options::try_from(matches)
 }
 
@@ -230,7 +230,7 @@ impl From<CrateError> for ArgsError {
 }
 impl Error for ArgsError {
     fn description(&self) -> &str { "failed to parse argv" }
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match self {
             &ArgsError::Parse(ref e) => Some(e),
             &ArgsError::Crate(ref e) => Some(e),
@@ -264,7 +264,7 @@ impl From<CrateVersionError> for CrateError {
 }
 impl Error for CrateError {
     fn description(&self) -> &str { "invalid crate specification" }
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match self {
             &CrateError::Version(ref e) => Some(e),
             _ => None,

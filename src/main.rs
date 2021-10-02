@@ -155,7 +155,7 @@ const CRATES_API_ROOT: &'static str = "https://crates.io/api/v1/crates";
 
 /// Talk to crates.io to get the newest version of given crate
 /// that matches specified version requirements.
-fn get_newest_version(crate_: &Crate) -> Result<Version, Box<Error>> {
+fn get_newest_version(crate_: &Crate) -> Result<Version, Box<dyn Error>> {
     let versions_url = format!("{}/{}/versions", CRATES_API_ROOT, crate_.name());
     debug!("Fetching latest matching version of crate `{}` from {}", crate_, versions_url);
     let response: Json = reqwest::get(&versions_url)?.json()?;
@@ -182,7 +182,7 @@ fn get_newest_version(crate_: &Crate) -> Result<Version, Box<Error>> {
 }
 
 /// Download given crate and return it as a vector of gzipped bytes.
-fn download_crate(name: &str, version: &Version) -> Result<Vec<u8>, Box<Error>> {
+fn download_crate(name: &str, version: &Version) -> Result<Vec<u8>, Box<dyn Error>> {
     let download_url = format!("{}/{}/{}/download", CRATES_API_ROOT, name, version);
     debug!("Downloading crate `{}=={}` from {}", name, version, download_url);
     let mut response = reqwest::get(&download_url)?;
